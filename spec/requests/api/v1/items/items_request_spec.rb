@@ -55,4 +55,9 @@ RSpec.describe "Items API" do
 
     expect(item[:attributes][:merchant_id]).to eq(merchant.id)
   end
+
+  it 'can update an existing item' do
+    merchant = create(:merchant)
+
+  end
 end

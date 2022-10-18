@@ -24,43 +24,70 @@ describe "Merchants API" do
   end
 
   it 'returns one merchant based on id' do
-    id = create(:merchant).id
+    merchant = create(:merchant)
 
-    get "/api/v1/merchants/#{id}"
-
-    merchant = JSON.parse(response.body, symbolize_names: true)
+    get "/api/v1/merchants/#{merchant.id}"
 
     expect(response).to be_successful
-
-    expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to eq(id)
-
-    expect(merchant).to have_key(:name)
-    expect(merchant[:name]).to be_a String
+    parsed_response = JSON.parse(response.body, symbolize_names: true)
+    pp parsed_response
+    expect(parsed_response).to match(
+      {
+        data: { attributes: {
+          name: merchant.name
+        },
+          id: merchant.id.to_s,
+          type: 'merchant'
+        }
+      }
+    )
   end
 
   it 'returns all items for a given merchant' do
     merchant = create(:merchant)
-    create_list(:item, 7, merchant_id: merchant.id)
+    items = create_list(:item, 2, merchant_id: merchant.id)
 
     get "/api/v1/merchants/#{merchant.id}/items"
 
     expect(response).to be_successful
-    items = JSON.parse(response.body, symbolize_names: true)
-    expect(items.count).to eq 7
+    parsed_response = JSON.parse(response.body, symbolize_names: true)
+    expect(parsed_response).to match [
+      {
+        id: items[0].id,
+        name: items[0].name,
+        description: items[0].description,
+        unit_price: items[0].unit_price,
+        merchant_id: merchant.id,
+        created_at: anything,
+        updated_at: anything,
+      },
+      {
+        id: items[1].id,
+        name: items[1].name,
+        description: items[1].description,
+        unit_price: items[1].unit_price,
+        merchant_id: merchant.id,
+        created_at: anything,
+        updated_at: anything,
+      },
+    ]
   end
 
   it 'can create a new merchant' do
-    merchant_params = { name: 'Mary B'}
-    headers = { "CONTENT_TYPE" => "application/json"}
+    merchant_params = { name: 'Mary B' }
+    headers = { "CONTENT_TYPE" => "application/json" }
 
     post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merchant_params)
     created_merchant = Merchant.last
-    merchant = JSON.parse(response.body, symbolize_names: true)
+    parsed_response = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to be_successful
-    expect(created_merchant.name).to eq(merchant_params[:name])
-    expect(merchant).to have_key(:data)
-    expect(merchant[:data]).to have_key(:id)
+    expect(parsed_response).to eq(
+      data: {
+        id: created_merchant.id.to_s,
+        type: 'merchant',
+        attributes: { name: 'Mary B' }
+      },
+    )
   end
 end
