@@ -49,4 +49,18 @@ describe "Merchants API" do
     items = JSON.parse(response.body, symbolize_names: true)
     expect(items.count).to eq 7
   end
+
+  it 'can create a new merchant' do
+    merchant_params = { name: 'Mary B'}
+    headers = { "CONTENT_TYPE" => "application/json"}
+
+    post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merchant_params)
+    created_merchant = Merchant.last
+    merchant = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(created_merchant.name).to eq(merchant_params[:name])
+    expect(merchant).to have_key(:data)
+    expect(merchant[:data]).to have_key(:id)
+  end
 end
