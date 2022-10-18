@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Merchants API" do
-  it "requests all merchants" do
+  it "sends all merchants" do
     merchants = create_list(:merchant, 3)
     get '/api/v1/merchants'
 
@@ -23,7 +23,7 @@ describe "Merchants API" do
     )
   end
 
-  it 'can return one merchant based on id' do
+  it 'returns one merchant based on id' do
     id = create(:merchant).id
 
     get "/api/v1/merchants/#{id}"
@@ -37,5 +37,16 @@ describe "Merchants API" do
 
     expect(merchant).to have_key(:name)
     expect(merchant[:name]).to be_a String
+  end
+
+  it 'returns all items for a given merchant' do
+    merchant = create(:merchant)
+    create_list(:item, 7, merchant_id: merchant.id)
+
+    get "/api/v1/merchants/#{merchant.id}/items"
+
+    expect(response).to be_successful
+    items = JSON.parse(response.body, symbolize_names: true)
+    expect(items.count).to eq 7
   end
 end
