@@ -86,4 +86,30 @@ RSpec.describe "Items API" do
     expect(Item.count).to eq(0)
     expect { Item.find(item.id) }.to raise_error(ActiveRecord::RecordNotFound)
   end
+
+  it 'can return the merchant associated with an item' do
+    merchant = create(:merchant)
+    item = create(:item, merchant_id: merchant.id)
+    get "/api/v1/items/#{item.id}/merchant"
+
+    expect(response).to be_successful
+    parsed_response = JSON.parse(response.body, symbolize_names: true)
+    expect(parsed_response).to eq({
+      data:
+        { id: merchant.id.to_s,
+          type: 'merchant',
+          attributes:
+            { name: merchant.name }
+        }})
+  end
+
+  describe 'missing item edge case' do
+    it 'will return an error if a merchant is not found' do
+    merchant = create(:merchant)
+    get '/api/v1/items/1/merchant'
+
+    expect(response).to have_http_status(404)
+    expect(response.successful?).to eq false
+    end
+  end
 end

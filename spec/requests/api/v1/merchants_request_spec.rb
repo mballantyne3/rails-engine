@@ -30,7 +30,7 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     parsed_response = JSON.parse(response.body, symbolize_names: true)
-    pp parsed_response
+
     expect(parsed_response).to match(
       {
         data: { attributes: {
@@ -51,26 +51,37 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     parsed_response = JSON.parse(response.body, symbolize_names: true)
-    expect(parsed_response).to match [
+    expect(parsed_response).to match data: [
       {
-        id: items[0].id,
-        name: items[0].name,
-        description: items[0].description,
-        unit_price: items[0].unit_price,
-        merchant_id: merchant.id,
-        created_at: anything,
-        updated_at: anything,
-      },
+        attributes: {
+          name: items[0].name,
+          description: items[0].description,
+          unit_price: items[0].unit_price,
+          merchant_id: merchant.id,
+
+        },
+        id: items[0].id.to_s,
+        type: 'item'},
       {
-        id: items[1].id,
-        name: items[1].name,
-        description: items[1].description,
-        unit_price: items[1].unit_price,
-        merchant_id: merchant.id,
-        created_at: anything,
-        updated_at: anything,
+        attributes: {
+          name: items[1].name,
+          description: items[1].description,
+          unit_price: items[1].unit_price,
+          merchant_id: merchant.id,
+        },
+        id: items[1].id.to_s,
+        type: 'item'
       },
     ]
+  end
+
+  describe 'missing merchant edge case' do
+    it 'will return an error if a merchant is not found' do
+      get '/api/v1/merchants/1'
+
+      expect(response).to have_http_status(404)
+      expect(response.successful?).to eq false
+    end
   end
 
   it 'can create a new merchant' do
@@ -89,21 +100,5 @@ describe "Merchants API" do
         attributes: { name: 'Mary B' }
       },
     )
-  end
-
-  it 'can update an existing item' do
-    id = create(:merchant).id
-    previous_name = Merchant.last.name
-    merchant_params = { name: "Gandalf the White" }
-
-    headers = { "CONTENT_TYPE" => "application/json" }
-
-    patch "/api/v1/merchants/#{id}", headers: headers,
-      params: JSON.generate({merchant: merchant_params})
-    merchant = Merchant.find_by(id: id)
-
-    expect(response).to be_successful
-    expect(merchant.name).to_not eq(previous_name)
-    expect(merchant.name).to eq("Gandalf the White")
   end
 end
