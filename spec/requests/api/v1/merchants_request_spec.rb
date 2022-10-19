@@ -73,6 +73,15 @@ describe "Merchants API" do
     ]
   end
 
+  describe 'missing merchant edge case' do
+    it 'will return an error if a merchant is not found' do
+      get '/api/v1/merchants/1'
+
+      expect(response).to have_http_status(404)
+      expect(response.successful?).to eq false
+    end
+  end
+
   it 'can create a new merchant' do
     merchant_params = { name: 'Mary B' }
     headers = { "CONTENT_TYPE" => "application/json" }
@@ -99,7 +108,7 @@ describe "Merchants API" do
     headers = { "CONTENT_TYPE" => "application/json" }
 
     patch "/api/v1/merchants/#{id}", headers: headers,
-      params: JSON.generate({merchant: merchant_params})
+      params: JSON.generate({ merchant: merchant_params })
     merchant = Merchant.find_by(id: id)
 
     expect(response).to be_successful
