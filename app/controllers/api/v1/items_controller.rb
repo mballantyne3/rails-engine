@@ -8,10 +8,11 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    render json: ItemSerializer.new(Item.create!(item_params))
+    render json: ItemSerializer.new(Item.create!(item_params)), status: 201
   end
 
   def update
+    Merchant.find(params[:merchant_id]) if params[:merchant_id]
     render json: ItemSerializer.new(Item.update(params[:id], item_params))
   end
 
