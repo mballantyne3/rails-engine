@@ -7,7 +7,7 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     response_body = JSON.parse(response.body, symbolize_names: true)
-    pp response_body
+
     expect(response_body).to match(
       { :data => [{
         :id => merchants[0].id.to_s,
