@@ -30,7 +30,7 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     parsed_response = JSON.parse(response.body, symbolize_names: true)
-    pp parsed_response
+
     expect(parsed_response).to match(
       {
         data: { attributes: {
@@ -100,21 +100,5 @@ describe "Merchants API" do
         attributes: { name: 'Mary B' }
       },
     )
-  end
-
-  it 'can update an existing item' do
-    id = create(:merchant).id
-    previous_name = Merchant.last.name
-    merchant_params = { name: "Gandalf the White" }
-
-    headers = { "CONTENT_TYPE" => "application/json" }
-
-    patch "/api/v1/merchants/#{id}", headers: headers,
-      params: JSON.generate({ merchant: merchant_params })
-    merchant = Merchant.find_by(id: id)
-
-    expect(response).to be_successful
-    expect(merchant.name).to_not eq(previous_name)
-    expect(merchant.name).to eq("Gandalf the White")
   end
 end
