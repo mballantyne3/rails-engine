@@ -7,19 +7,24 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     response_body = JSON.parse(response.body, symbolize_names: true)
-    expect(response_body).to contain_exactly(
-      a_hash_including({
-        id: merchants[0].id,
-        name: merchants[0].name,
-      }),
-      a_hash_including({
-        id: merchants[1].id,
-        name: merchants[1].name,
-      }),
-      a_hash_including({
-        id: merchants[2].id,
-        name: merchants[2].name,
-      }),
+    pp response_body
+    expect(response_body).to match(
+      { :data => [{
+        :id => merchants[0].id.to_s,
+        :type => "merchant",
+        :attributes => {
+          :name => merchants[0].name } },
+
+        { :id => merchants[1].id.to_s,
+          :type => "merchant",
+          :attributes => {
+            :name => merchants[1].name } },
+        { :id => merchants[2].id.to_s,
+          :type => "merchant",
+          :attributes => {
+            :name => merchants[2].name }
+        }]
+      }
     )
   end
 
@@ -61,7 +66,7 @@ describe "Merchants API" do
 
         },
         id: items[0].id.to_s,
-        type: 'item'},
+        type: 'item' },
       {
         attributes: {
           name: items[1].name,

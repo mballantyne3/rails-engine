@@ -1,10 +1,14 @@
 class Api::V1::MerchantsController < ApplicationController
   def index
-    render json: Merchant.all
+    render json: MerchantSerializer.new(Merchant.all)
   end
 
   def show
-    render json: MerchantSerializer.new(Merchant.find(params[:id]))
+    if Merchant.find_by_id(params[:id]).present?
+      render json: MerchantSerializer.new(Merchant.find(params[:id]))
+    else
+      render status: 404
+    end
   end
 
   def create
