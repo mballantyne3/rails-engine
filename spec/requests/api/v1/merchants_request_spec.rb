@@ -51,24 +51,26 @@ describe "Merchants API" do
 
     expect(response).to be_successful
     parsed_response = JSON.parse(response.body, symbolize_names: true)
-    expect(parsed_response).to match [
+    expect(parsed_response).to match data: [
       {
-        id: items[0].id,
-        name: items[0].name,
-        description: items[0].description,
-        unit_price: items[0].unit_price,
-        merchant_id: merchant.id,
-        created_at: anything,
-        updated_at: anything,
-      },
+        attributes: {
+          name: items[0].name,
+          description: items[0].description,
+          unit_price: items[0].unit_price,
+          merchant_id: merchant.id,
+
+        },
+        id: items[0].id.to_s,
+        type: 'item'},
       {
-        id: items[1].id,
-        name: items[1].name,
-        description: items[1].description,
-        unit_price: items[1].unit_price,
-        merchant_id: merchant.id,
-        created_at: anything,
-        updated_at: anything,
+        attributes: {
+          name: items[1].name,
+          description: items[1].description,
+          unit_price: items[1].unit_price,
+          merchant_id: merchant.id,
+        },
+        id: items[1].id.to_s,
+        type: 'item'
       },
     ]
   end
