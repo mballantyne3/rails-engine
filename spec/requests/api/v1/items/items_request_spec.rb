@@ -103,8 +103,8 @@ RSpec.describe "Items API" do
         }})
   end
 
-  describe 'missing item edge case' do
-    it 'will return an error if a merchant is not found' do
+  describe 'missing item sad path' do
+    it 'will return an error if an item is not found' do
     merchant = create(:merchant)
     get '/api/v1/items/1/merchant'
 

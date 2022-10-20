@@ -2,7 +2,7 @@ class Api::V1::Items::SearchController < ApplicationController
 
   def find_one
     item = Item
-      .where('name ILIKE ?', "%#{params[:name]}%")
+      .where('name ILIKE ?', "%#{params[:name]}%") #todo: .downcase
       .order(Arel.sql("LOWER(name)"))
       .first
 
