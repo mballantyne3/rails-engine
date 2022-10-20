@@ -27,4 +27,17 @@ RSpec.describe 'Find Items API' do
       }
     )
   end
+
+  describe 'sad path for item not matching a search' do
+    it 'returns an error message if an item does not match a search' do
+      merchant = create(:merchant)
+      item1 = Item.create!(name: "Dark Soul Blend", description: 'rich, chocolatey, soul crushing', unit_price: 16.66, merchant_id: merchant.id)
+      item2 = Item.create!(name: "Saurons Dark Blend", description: 'darker than its predecessor', unit_price: 7.89, merchant_id: merchant.id)
+      item3 = Item.create!(name: "Dark as my Soul Blend", description: 'darker STILL', unit_price: 7.89, merchant_id: merchant.id)
+
+      get "/api/v1/items/find?name=light"
+
+      expect(response.successful?).to eq false
+    end
+  end
 end
