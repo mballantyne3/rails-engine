@@ -8,7 +8,7 @@ class Api::V1::Items::SearchController < ApplicationController
 
     # Validation
     if name_search.present? && (min_price.present? || max_price.present?)
-      render json: { error: 'that would be too many params dude' }, status: 400 and return
+      render json: { error: 'that would be too many params there good human' }, status: 400 and return
     elsif min_price.present? && min_price < 0
       render json: { error: 'uhhhh... you think we are giving away items for free?' }, status: 400 and return
     elsif max_price.present? && max_price < 0
